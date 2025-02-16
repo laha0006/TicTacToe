@@ -121,7 +121,7 @@ function minmaxOG(state, isMax, currentDepth, targetDepth) {
     let best;
     if (isMax) {
         best = {score: Number.NEGATIVE_INFINITY, move: null};
-        for (let move of legalMoves) {
+        legalMoves.forEach(move => {
             const temp = state[move];
             state[move] = isComputerFirst ? 0 : 1;
             const result = minmaxOG(state, !isMax, newDepth, targetDepth);
@@ -129,13 +129,11 @@ function minmaxOG(state, isMax, currentDepth, targetDepth) {
             if (result.score > best.score) {
                 best = {score: result.score, move};
             }
-        }
-
-
+        });
 
     } else {
         best = {score: Number.POSITIVE_INFINITY, move: null};
-        for (let move of legalMoves) {
+        legalMoves.forEach(move => {
             const temp = state[move];
             state[move] = isComputerFirst ? 1 : 0;
             const result = minmaxOG(state, !isMax, newDepth, targetDepth);
@@ -143,7 +141,7 @@ function minmaxOG(state, isMax, currentDepth, targetDepth) {
             if (result.score < best.score) {
                 best = {score: result.score, move};
             }
-        }
+        })
 
 
     }
