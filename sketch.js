@@ -162,7 +162,7 @@ function drawO(location) {
 }
 
 function canvasClicked() {
-    // console.log("Canvas clicked at:", mouseX, mouseY);
+
     if (mouseX <= 200 && mouseY <= 200) {
         playerMove(0)
     } else if (mouseX <= 400 && mouseY <= 200) {
@@ -198,13 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
     computerFirstElem.innerText = isComputerFirst ? "True" : "False";
     depthElem.innerText = inputSearchDepth.value;
     searchDepth = +inputSearchDepth.value;
-    console.log("AbCount DOMCONTENTLOADED:", AbCount);
-
-    gameState = emptyBoard.slice();
-    console.log(typeof 1)
-    console.log(typeof searchDepth)
-    let someMove = getMove(gameState, searchDepth);
-
 });
 
 function toggleComputerStart() {
@@ -216,27 +209,20 @@ function toggleComputerStart() {
 function setSearchDepth() {
     const inputSearchDepth = document.getElementById("inputSearchDepth")
     const depthElem = document.getElementById("searchDepth")
-    searchDepth = inputSearchDepth.value
+    searchDepth = +inputSearchDepth.value
     depthElem.innerText = searchDepth;
-
-    console.log("AbCount:", AbCount);
 }
 
 
 function newGame() {
-    console.log("new game");
-    console.log(AbCount)
     gameState = emptyBoard.slice();
     isPlayerTurn = !isComputerFirst;
     gameEnded = false;
     gameIsDraw = false;
     playerWon = false;
     if (isComputerFirst) {
-        console.log(AbCount)
         computerMove()
-        console.log(AbCount)
     }
-    console.log(AbCount)
 }
 
 function playerMove(location) {
@@ -259,14 +245,8 @@ function playerMove(location) {
 }
 
 function computerMove() {
-    console.log("Computer move!")
-    console.log(AbCount)
     let computerMarker = isComputerFirst ? 0 : 1;
-    let stateCopy = [...gameState];
-    console.log("BEFORE MOVE");
-    let move = getMove(stateCopy, searchDepth);
-    console.log("AFTER MOVE");
-    console.log(AbCount)
+    let move = getMove(gameState, searchDepth);
     gameState[move] = computerMarker;
     if (isDraw(gameState)) {
         gameEnded = true;

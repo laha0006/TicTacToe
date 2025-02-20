@@ -159,17 +159,13 @@ function minmaxOG(state, isMax, currentDepth, targetDepth, alpha, beta) {
 function getMove(state,searchDepth) {
     AbCount = 0;
     count = 0;
-    console.log("STATE: ", state);
-    let stateCopy = [...state]
-    let ABmove = minmaxOG(stateCopy, true, 0, searchDepth,Number.NEGATIVE_INFINITY,Number.POSITIVE_INFINITY).move;
+    let ABmove = minmaxOG(state, true, 0, searchDepth,Number.NEGATIVE_INFINITY,Number.POSITIVE_INFINITY).move;
+    let move = minimax(state,true,0,searchDepth,Number.NEGATIVE_INFINITY).move;
     console.log("SEARCH DEPTH:", searchDepth);
     console.log("alpha beta count:", AbCount);
     console.log("without    count:", count);
-    AbCount = 0;
-    count = 0;
     return ABmove;
 }
 
-// getMove(emptyBoard,1);
-// getMove(emptyBoard,1);
 
+getMove(emptyBoard,6);
