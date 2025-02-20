@@ -8,7 +8,24 @@
     <script src="sketch.js"></script>
     <link rel="stylesheet" href="./styles.css">
 </head>
-<body>
-
+<body style="color: white;">
+<div style='display: flex; justify-content: center; align-items: center;'>
+    <div style="background-color: red"></div>
+    <div style="background-color: blue"></div>
+    <div>
+        <button onclick="newGame()">New Game</button>
+        <Button onclick="toggleComputerStart()">Computer Start Toggle</Button>
+    </div>
+</div>
+<div style='display: flex; justify-content: flex-start; align-items: center; margin-left: 250px;'>
+Computer Starts: &nbsp; <p id="computerFirst"></p>
+</div>
+<div style='display: flex; justify-content: flex-start; align-items: center; margin-left: 250px;'>
+Search depth: &nbsp; <p id="searchDepth"></p>
+</div>
+<div style='display: flex; justify-content: flex-start; align-items: center; margin-left: 250px;'>
+    <input type="number" min="1" max="100" step="1" value="1" id="inputSearchDepth">
+    <button onclick="setSearchDepth()">Set Depth</button>
+</div>
 </body>
 </html>
