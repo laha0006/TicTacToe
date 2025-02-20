@@ -63,56 +63,46 @@ function checkWinState(state) {
 const bestMoveFromScore = {}
 
 
-function minimax(state, isMax, currentDepth, targetDepth) {
-    const legalMoves = getLegalMoves(state);
-    if (currentDepth === targetDepth || checkWinState(state) !== -1 || legalMoves.length === 0) {
-        return {score: evaluate(state, currentDepth), move: null};
-    }
-
-    let best;
-    if (isMax) {
-        best = {score: Number.NEGATIVE_INFINITY, move: null};
-        for (let move of legalMoves) {
-            const temp = state[move];
-            state[move] = isComputerFirst ? O : X;
-            const result = minimax(state, false, currentDepth + 1, targetDepth);
-            state[move] = temp;
-            if (result.score > best.score) {
-                best = {score: result.score, move};
-            }
-        }
-    } else {
-        best = {score: Number.POSITIVE_INFINITY, move: null};
-        for (let move of legalMoves) {
-            const temp = state[move];
-            state[move] = isComputerFirst ? X : O;
-            const result = minimax(state, true, currentDepth + 1, targetDepth);
-            state[move] = temp;
-            if (result.score < best.score) {
-                best = {score: result.score, move};
-            }
-        }
-    }
-    return best;
-}
-
-// Usage:
-const needToBlock = [1, 1, -1, -1, 0, -1, -1, -1, -1];
-const needToBlockButLosingIFPerfect = [1, 0, -1, -1, -1, -1, -1, -1, 1];
-const result = minimax(needToBlock, true, 0, 2);
-console.log("Score:", result.score);
-console.log("Move:", result.move);
-console.log(minimax(needToBlock, true, 0, 1));
-console.log(minimax(needToBlock, true, 0, 2));
-console.log(minimax(needToBlock, true, 0, 3));
-console.log(minimax(needToBlock, true, 0, 4));
-console.log(minimax(needToBlock, true, 0, 5));
-console.log(minimax(needToBlock, true, 0, 6));
-console.log(minimax(needToBlock, true, 0, 7));
-console.log(minimax(needToBlock, true, 0, 8));
+// function minimax(state, isMax, currentDepth, targetDepth) {
+//     count++;
+//     const legalMoves = getLegalMoves(state);
+//     if (currentDepth === targetDepth || checkWinState(state) !== -1 || legalMoves.length === 0) {
+//         return {score: evaluate(state, currentDepth), move: null};
+//     }
+//
+//     let best;
+//     if (isMax) {
+//         best = {score: Number.NEGATIVE_INFINITY, move: null};
+//         for (let move of legalMoves) {
+//             const temp = state[move];
+//             state[move] = isComputerFirst ? O : X;
+//             const result = minimax(state, false, currentDepth + 1, targetDepth);
+//             state[move] = temp;
+//             if (result.score > best.score) {
+//                 best = {score: result.score, move};
+//             }
+//         }
+//     } else {
+//         best = {score: Number.POSITIVE_INFINITY, move: null};
+//         for (let move of legalMoves) {
+//             const temp = state[move];
+//             state[move] = isComputerFirst ? X : O;
+//             const result = minimax(state, true, currentDepth + 1, targetDepth);
+//             state[move] = temp;
+//             if (result.score < best.score) {
+//                 best = {score: result.score, move};
+//             }
+//         }
+//     }
+//     return best;
+// }
 
 
-function minmaxOG(state, isMax, currentDepth, targetDepth) {
+
+let count = 0;
+
+function minmaxOG(state, isMax, currentDepth, targetDepth, alpha, beta) {
+    count++;
     const legalMoves = getLegalMoves(state);
     if (currentDepth === targetDepth || checkWinState(state) !== -1 || legalMoves.length === 0) {
         return {score: evaluate(state), move: null};
@@ -121,48 +111,42 @@ function minmaxOG(state, isMax, currentDepth, targetDepth) {
     let best;
     if (isMax) {
         best = {score: Number.NEGATIVE_INFINITY, move: null};
-        legalMoves.forEach(move => {
+        for (let move of legalMoves) {
             const temp = state[move];
             state[move] = isComputerFirst ? 0 : 1;
-            const result = minmaxOG(state, !isMax, newDepth, targetDepth);
+            const result = minmaxOG(state, !isMax, newDepth, targetDepth,alpha, beta);
             state[move] = temp;
             if (result.score > best.score) {
                 best = {score: result.score, move};
             }
-        });
+            if (result.score > beta) {
+                console.log("break");
+                break;
+            }
+            alpha = Math.max(alpha, result.score);
+        }
 
     } else {
         best = {score: Number.POSITIVE_INFINITY, move: null};
-        legalMoves.forEach(move => {
+        for (let move of legalMoves) {
             const temp = state[move];
             state[move] = isComputerFirst ? 1 : 0;
-            const result = minmaxOG(state, !isMax, newDepth, targetDepth);
+            const result = minmaxOG(state, !isMax, newDepth, targetDepth, alpha, beta);
             state[move] = temp;
             if (result.score < best.score) {
                 best = {score: result.score, move};
             }
-        })
-
-
+            if (result.score < alpha) {
+                console.log("break");
+                break;
+            }
+            beta = Math.max(beta, result.score);
+        }
     }
     return best;
 }
 
 function getMove(state) {
-    return minimax(state, true, 0, 2).move;
+    return minmaxOG(state, true, 0, 7,Number.NEGATIVE_INFINITY,Number.POSITIVE_INFINITY);
 }
-
-
-// const needToBlock = [1, 1, -1, -1, 0, -1, -1, -1, -1];
-console.log(getMove(needToBlock, true, 0, 2));
-// const needToBlockButLosingIFPerfect = [1, 1, -1, 0, -1, -1, 0, -1, -1];
-// let theScore = minmaxOG(needToBlockButLosingIFPerfect, true, 0, 5)
-// console.log("Score:", theScore);
-// console.log("move :",bestMoveFromScore[theScore]);
-// // console.log(Number.NEGATIVE_INFINITY);
-// console.log(bestMoveFromScore);
-// console.log(Math.max());
-// console.log(Math.min(Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY));
-// bestMoveFromScore[score] = move;
-// console.log(...getLegalMoves(emptyBoard));
 
