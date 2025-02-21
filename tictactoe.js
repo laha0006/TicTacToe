@@ -33,7 +33,7 @@ function evaluate(state, depth) {
     let playerPoints = 0;
     for (let i = 0; i < state.length; i++) {
         const current = state[i];
-        if (current === computerPoints) {
+        if (current === computerMarker) {
             computerPoints += points[i];
         }
         if (current === playerMarker) {
@@ -127,8 +127,11 @@ function minmaxOG(state, isMax, currentDepth, targetDepth, alpha, beta) {
             const temp = state[move];
             state[move] = isComputerFirst ? 0 : 1;
             const result = minmaxOG(state, !isMax, newDepth, targetDepth,alpha, beta);
+            console.log("res:",result)
+            moves.push(result)
             state[move] = temp;
             if (result.score > best.score) {
+                console.log("result:" + result.score);
                 best = {score: result.score, move};
             }
             alpha = Math.max(alpha, result.score);
@@ -138,6 +141,7 @@ function minmaxOG(state, isMax, currentDepth, targetDepth, alpha, beta) {
         }
 
     } else {
+        console.log("MINIMIZING")
         best = {score: Number.POSITIVE_INFINITY, move: null};
         for (let move of legalMoves) {
             const temp = state[move];
@@ -153,14 +157,18 @@ function minmaxOG(state, isMax, currentDepth, targetDepth, alpha, beta) {
             }
         }
     }
+    console.log("best:",best);
     return best;
 }
-
+let moves = []
 function getMove(state,searchDepth) {
     AbCount = 0;
     count = 0;
     let ABmove = minmaxOG(state, true, 0, searchDepth,Number.NEGATIVE_INFINITY,Number.POSITIVE_INFINITY).move;
-    let move = minimax(state,true,0,+searchDepth,Number.NEGATIVE_INFINITY).move;
+    const objectMove = minimax(state,true,0,+searchDepth,Number.NEGATIVE_INFINITY);
+    console.log(objectMove);
+    console.log(moves)
+    let move = objectMove.move;
     console.log("SEARCH DEPTH:", searchDepth);
     console.log("alpha beta count:", AbCount);
     console.log("without    count:", count);
