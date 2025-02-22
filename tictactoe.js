@@ -12,9 +12,6 @@ function getLegalMoves(state) {
             moves.push(i);
         }
     }
-    if (moves.length === 0) {
-        // console.log("getLegalMoves found no moves! State:", state);
-    }
     return moves;
 }
 
@@ -26,7 +23,7 @@ function evaluate(state, depth) {
         if (winState === computerMarker) {
             return 1000 - depth // computer wins
         } else {
-            return -1000 -depth // computer loses
+            return -1000 - depth // computer loses
         }
     }
     let computerPoints = 0;
@@ -70,10 +67,6 @@ function isDraw(state) {
     return isDraw && checkWinState(state) === -1;
 }
 
-
-const bestMoveFromScore = {}
-
-
 function minimax(state, isMax, currentDepth, targetDepth) {
     count++;
     const legalMoves = getLegalMoves(state);
@@ -113,7 +106,7 @@ function minimax(state, isMax, currentDepth, targetDepth) {
 let AbCount = 0;
 let count = 0;
 
-function minmaxOG(state, isMax, currentDepth, targetDepth, alpha, beta) {
+function minMaxAlphaBeta(state, isMax, currentDepth, targetDepth, alpha, beta) {
     AbCount++;
     const legalMoves = getLegalMoves(state);
     if (currentDepth === targetDepth || checkWinState(state) !== -1 || legalMoves.length === 0) {
@@ -126,12 +119,9 @@ function minmaxOG(state, isMax, currentDepth, targetDepth, alpha, beta) {
         for (let move of legalMoves) {
             const temp = state[move];
             state[move] = isComputerFirst ? 0 : 1;
-            const result = minmaxOG(state, !isMax, newDepth, targetDepth,alpha, beta);
-            console.log("res:",result)
-            moves.push(result)
+            const result = minMaxAlphaBeta(state, !isMax, newDepth, targetDepth,alpha, beta);
             state[move] = temp;
             if (result.score > best.score) {
-                console.log("result:" + result.score);
                 best = {score: result.score, move};
             }
             alpha = Math.max(alpha, result.score);
@@ -141,12 +131,11 @@ function minmaxOG(state, isMax, currentDepth, targetDepth, alpha, beta) {
         }
 
     } else {
-        console.log("MINIMIZING")
         best = {score: Number.POSITIVE_INFINITY, move: null};
         for (let move of legalMoves) {
             const temp = state[move];
             state[move] = isComputerFirst ? 1 : 0;
-            const result = minmaxOG(state, !isMax, newDepth, targetDepth, alpha, beta);
+            const result = minMaxAlphaBeta(state, !isMax, newDepth, targetDepth, alpha, beta);
             state[move] = temp;
             if (result.score < best.score) {
                 best = {score: result.score, move};
@@ -157,23 +146,17 @@ function minmaxOG(state, isMax, currentDepth, targetDepth, alpha, beta) {
             }
         }
     }
-    console.log("best:",best);
     return best;
 }
-let moves = []
+
 function getMove(state,searchDepth) {
     AbCount = 0;
     count = 0;
-    let ABmove = minmaxOG(state, true, 0, searchDepth,Number.NEGATIVE_INFINITY,Number.POSITIVE_INFINITY).move;
-    const objectMove = minimax(state,true,0,+searchDepth,Number.NEGATIVE_INFINITY);
-    console.log(objectMove);
-    console.log(moves)
-    let move = objectMove.move;
+    const alphaBetaMove = minMaxAlphaBeta(state, true, 0, searchDepth,Number.NEGATIVE_INFINITY,Number.POSITIVE_INFINITY).move;
+    const noAlphaBetatMove = minimax(state,true,0,+searchDepth,Number.NEGATIVE_INFINITY);
     console.log("SEARCH DEPTH:", searchDepth);
     console.log("alpha beta count:", AbCount);
     console.log("without    count:", count);
-    return ABmove;
+    console.log("pruned          :", count - AbCount)
+    return alphaBetaMove;
 }
-
-
-// getMove(emptyBoard,6);
